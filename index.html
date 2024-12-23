@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة كرة تدمر كونايو!</title>
+    <style>
+        /* إعادة تعيين التنسيق الافتراضي */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ff0000; /* خلفية حمراء */
+            color: #fff;
+            text-align: center;
+            padding: 50px;
+        }
+
+        header {
+            background-color: #cc0000; /* خلفية رأس الموقع بلون أحمر داكن */
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        #gameCanvas {
+            border: 2px solid #fff;
+            margin-top: 20px;
+            background-color: #ff5555;
+        }
+
+        button {
+            background-color: #cc0000; /* زر باللون الأحمر الداكن */
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #990000; /* تغيير لون الزر عند التمرير عليه */
+        }
+
+        footer {
+            background-color: #cc0000; /* تذييل الموقع بلون أحمر داكن */
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>مرحباً في لعبة كرة تدمر كونايو!</h1>
+    </header>
+    <main>
+        <canvas id="gameCanvas" width="300" height="500"></canvas>
+        <button onclick="changeBackground()">تغيير الخلفية!</button>
+    </main>
+    <footer>
+        <p>&copy; 2024 جميع الحقوق محفوظة</p>
+    </footer>
+
+    <script>
+        // إعدادات اللعبة
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        let ballRadius = 10;
+        let x = canvas.width / 2;
+        let y = canvas.height - ballRadius - 30;
+        let dx = 2;
+        let dy = -2;
+        let gravity = 0.1;
+        let jumpPower = -4;
+
+        // الألوان المتاحة لتغيير الخلفية
+        const backgrounds = ["#ff0000", "#ff5555", "#00ff00", "#0000ff"];
+        let backgroundIndex = 0;
+
+        // رسم الكرة
+        function drawBall() {
+            ctx.beginPath();
+            ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
+            ctx.fillStyle = "#fff";
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        // تحديث الموقع
+        function update() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // تنظيف الشاشة
+            drawBall();
+            
+            // حرك الكرة
+            x += dx;
+            y += dy;
+            
+            // تأثير الجاذبية
+            if (y + dy > canvas.height - ballRadius) {
+                dy = -dy * 0.8; // الكرة ترتد قليلاً
+            } else {
+                dy += gravity; // الجاذبية
+            }
+            
+            // تغير الاتجاه إذا ارتطمت بالجانب
+            if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
+                dx = -dx;
+            }
+        }
+
+        // التحكم في الخلفية
+        function changeBackground() {
+            backgroundIndex = (backgroundIndex + 1) % backgrounds.length;
+            canvas.style.backgroundColor = backgrounds[backgroundIndex];
+        }
+
+        // الاستماع إلى حركة الجهاز (التحكم عبر الهاتف)
+        window.addEventListener("deviceorientation", (event) => {
+            if (event.gamma) {
+                dx = event.gamma / 10;  // تعديل سرعة الحركة على حسب التوجيه
+            }
+        });
+
+        // لتغيير الخلفية عند الضغط على الزر
+        function changeBackground() {
+            backgroundIndex = (backgroundIndex + 1) % backgrounds.length;
+            canvas.style.backgroundColor = backgrounds[backgroundIndex];
+        }
+
+        // اللعبة تعمل كل 10 مللي ثانية
+        setInterval(update, 10);
+    </script>
+</body>
+</html>
